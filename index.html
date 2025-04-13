@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>ヒット＆ブロー 2人対戦</title>
+</head>
+<body>
+<script>
+  let N = 3; // 桁数
+  let comp_array = [];
+  let valid = false;
+  let guessLog = ""; // ログ用文字列
+  let turn = 0;
+
+  // プレイヤー1が答えを設定
+  while (!valid) {
+    let secret = prompt("プレイヤー1：秘密の " + N + " 桁の数字を入力してください（重複なし・他の人に見られないように）");
+    if (!/^\d+$/.test(secret) || secret.length !== N) {
+      alert("数字は " + N + " 桁で入力してください。");
+      continue;
+    }
+
+    comp_array = secret.split('').map(Number);
+    if (new Set(comp_array).size !== N) {
+      alert("数字が重複しています。異なる数字にしてください。");
+      continue;
+    }
+
+    valid = true;
+  }
+
+  let finished = false;
+
+  while (!finished) {
+    let guess = prompt("【" + (turn + 1) + "ターン目】 プレイヤー2：予想する " + N + " 桁の数字を入力してください（重複なし）");
+
+    if (!/^\d+$/.test(guess) || guess.length !== N) {
+      alert("数字は " + N + " 桁で入力してください。");
+      continue;
+    }
+
+    let user_array = guess.split('').map(Number);
+    if (new Set(user_array).size !== N) {
+      alert("数字が重複しています。異なる数字にしてください。");
+      continue;
+    }
+
+    turn++;
+
+    // ヒット数カウント
+    let countH = 0;
+    for (let i = 0; i < N; i++) {
+      if (user_array[i] === comp_array[i]) {
+        countH++;
+      }
+    }
+
+    // ヒット＋ブローをカウント
+    let countHB = 0;
+    for (let i = 0; i < N; i++) {
+      for (let j = 0; j < N; j++) {
+        if (user_array[i] === comp_array[j]) {
+          countHB++;
+        }
+      }
+    }
+
+    let countB = countHB - countH;
+
+    // ログ記録
+    guessLog += turn + "回目：" + guess + " → " + countH + "H " + countB + "B\n";
+
+    // 結果表示
+    alert(countH + "H " + countB + "B");
+
+    if (countH === N) {
+      alert("🎉 正解！ プレイヤー2の勝ち！");
+      alert("🔢 プレイログ：\n\n" + guessLog);
+      finished = true;
+    }
+  }
+</script>
+</body>
+</html>
